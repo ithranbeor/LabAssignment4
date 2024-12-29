@@ -1,166 +1,200 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { supabase } from '../../../lib/supabase';
 
-const App = () => {
+const ProfilePage = () => {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const { data: authData, error: authError } = await supabase.auth.getUser();
+
+        if (authError) {
+          console.error('Auth Error:', authError.message);
+          return;
+        }
+
+        if (authData?.user) {
+          const { data: profileData, error: profileError } = await supabase
+            .from('accDetails')
+            .select('username, profile_Picture')
+            .eq('email', authData.user.email)
+            .single(); 
+
+          if (profileError || !profileData) {
+            console.error('Profile Error:', profileError?.message || 'No profile data found');
+            return;
+          }
+
+          const profilePic = profileData?.profile_Picture
+            ? profileData.profile_Picture 
+            : 'https://via.placeholder.com/100?text=No+Image'; 
+
+          setUser({
+            ...authData.user,
+            username: profileData?.username,
+            profile_Picture: profilePic,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData(); 
+  }, []);
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Yes',
+          style: 'destructive',
+          onPress: async () => {
+            await supabase.auth.signOut();
+            router.replace('/'); 
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  if (loading) {
+    return <Text>Loading...</Text>; 
+  }
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Header Section */}
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <View style={styles.profileImageContainer}>
+        <TouchableOpacity
+          style={styles.backIcon}
+          onPress={() => router.back()}
+        >
+          <MaterialCommunityIcons name="arrow-left" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        <View style={styles.profileContainer}>
           <Image
-            source={require('../../../assets/images/ithran.jpg')}
-            style={styles.profileImage}
+            source={user?.profile_Picture ? { uri: user.profile_Picture } : require('../../../assets/images/defaultpp.png')}
+            style={styles.profilePicture}
           />
-          <View style={styles.ratingBadge}>
-            <Text style={styles.ratingText}>4.9</Text>
-          </View>
         </View>
-        <Text style={styles.name}>Ithran Beor Turno</Text>
-        <Text style={styles.location}>Philippines, 21 y.o</Text>
+
+        <Text style={styles.name}>{user?.username || 'No Username'}</Text>
+        <Text style={styles.email}>{user?.email || 'No Email'}</Text>
       </View>
 
-      {/* Statistics Section */}
-      <View style={styles.statisticsContainer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>13 500</Text>
-          <Text style={styles.statLabel}>Followers</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>14 700</Text>
-          <Text style={styles.statLabel}>Visits</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>812</Text>
-          <Text style={styles.statLabel}>Following</Text>
-        </View>
+      <View style={styles.optionsContainer}>
+        <TouchableOpacity
+          style={styles.optionButton}
+          onPress={() => router.push('../editProfile')}
+        >
+          <Text style={styles.optionText}>Edit Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.optionButton}
+          onPress={() => router.push('../changePass')}
+        >
+          <Text style={styles.optionText}>Change Password</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Details Section */}
-      <View style={styles.detailsContainer}>
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Experience</Text>
-          <Text style={styles.detailValue}>6 years</Text>
-        </View>
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Specialization</Text>
-          <Text style={styles.detailValue}>
-            Digital Marketing, Marketing, Data Analytics, Social Media
-          </Text>
-        </View>
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>About</Text>
-          <Text style={styles.detailValue}>
-          This is my project in Mobile Programming. I am Ithran Beor Turno and I am 21 years old from Barangay Puntod, Cagayan de Oro City.
-          </Text>
-        </View>
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Hobbies</Text>
-          <Text style={styles.detailValue}>Singing</Text>
-        </View>
-      </View>
-    </ScrollView>
+      <TouchableOpacity style={styles.signOutButton} onPress={handleLogout}>
+        <Text style={styles.signOutText}>Sign Out</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f8f9fa',
+    flex: 1,
+    backgroundColor: '#f0f4ff',
     alignItems: 'center',
-    padding: 20,
   },
   headerContainer: {
+    backgroundColor: '#628bf8',
+    width: '100%',
     alignItems: 'center',
-    width: '112%',
-    marginBottom: 5,
-    position: 'relative',
-    backgroundColor: '#003366',
-    paddingVertical: 30,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  settingsIcon: {
-    position: 'absolute',
-    top: 15,
-    right: 15,
-  },
-  profileImageContainer: {
+    paddingVertical: 40,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
     position: 'relative',
   },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: '#fff',
-  },
-  ratingBadge: {
+  backIcon: {
     position: 'absolute',
-    bottom: 0,
-    right: -10,
-    backgroundColor: '#fbc02d',
-    borderRadius: 15,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    top: 20,
+    left: 20,
   },
-  ratingText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 12,
+  profileContainer: {
+    width: 150,
+    height: 150,
+    borderRadius: 60,
+    borderWidth: 0,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  profilePicture: {
+    width: 150,
+    height: 150,
+    borderRadius: 130,
   },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
-    marginTop: 10,
   },
-  location: {
+  email: {
     fontSize: 14,
-    color: '#dcdcdc',
+    color: '#dfe6ff',
+    marginTop: 5,
   },
-  statisticsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginVertical: 20,
-    paddingHorizontal: 30,
+  optionsContainer: {
+    backgroundColor: '#d9e4ff',
+    width: '90%',
+    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginTop: 20,
   },
-  statItem: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#666',
-  },
-  detailsContainer: {
-    backgroundColor: '#003366',
-    width: '112%',
-    padding: 20,
-    borderRadius: 20,
-  },
-  detailItem: {
+  optionButton: {
+    backgroundColor: '#628bf8',
+    padding: 10,
+    borderRadius: 10,
     marginBottom: 15,
   },
-  detailLabel: {
-    fontSize: 14,
-    color: '#aaa',
-    marginBottom: 5,
-  },
-  detailValue: {
+  optionText: {
     fontSize: 16,
     color: '#fff',
+    textAlign: 'center',
+  },
+  signOutButton: {
+    margin: 20,
+  },
+  signOutText: {
+    fontSize: 16,
+    color: 'red',
+    fontWeight: 'bold',
   },
 });
 
-export default App;
+export default ProfilePage;

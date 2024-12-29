@@ -2,32 +2,33 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, Alert, StatusBar, Animated, Image } from 'react-native';
 import { TextInput as PaperInput, Button, DefaultTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router'; 
+import { useRouter } from 'expo-router';
+import { supabase } from '../lib/supabase'; 
 
 const SignInPage = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const router = useRouter();
 
-  const customTextColor = '#333333'; 
+  const customTextColor = '#333333';
   const customTheme = {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      text: customTextColor, 
+      text: customTextColor,
     },
   };
 
   useEffect(() => {
     const loadCredentials = async () => {
       try {
-        const savedUsername = await AsyncStorage.getItem('username');
+        const savedEmail = await AsyncStorage.getItem('email');
         const savedPassword = await AsyncStorage.getItem('password');
-        if (savedUsername && savedPassword) {
-          setUsername(savedUsername);
+        if (savedEmail && savedPassword) {
+          setEmail(savedEmail);
           setPassword(savedPassword);
           setRememberMe(true);
         }
@@ -39,29 +40,43 @@ const SignInPage = () => {
   }, []);
 
   const handleSignIn = async () => {
-    if (username === 'Admin' && password === 'Admin') {
-      if (rememberMe) {
-        try {
-          await AsyncStorage.setItem('username', username);
-          await AsyncStorage.setItem('password', password);
-        } catch (error) {
-          console.log('Error saving credentials', error);
-        }
-      } else {
-        try {
-          await AsyncStorage.removeItem('username');
-          await AsyncStorage.removeItem('password');
-        } catch (error) {
-          console.log('Error clearing credentials', error);
-        }
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter your email and password');
+      return;
+    }
+  
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+  
+      if (error) {
+        console.log('Error:', error.message);
+        Alert.alert('Error', 'Invalid email or password');
+        return;
       }
-      router.replace('/dashboard'); 
-    } else if (username === '' || password === '') {
-      Alert.alert('Error', 'Please enter your username and password');
-    } else {
-      Alert.alert('Error', 'Invalid username or password');
+  
+      if (data) {
+        if (rememberMe) {
+          await AsyncStorage.setItem('email', email);
+          await AsyncStorage.setItem('password', password);
+        } else {
+          await AsyncStorage.removeItem('email');
+          await AsyncStorage.removeItem('password');
+        }
+  
+        Alert.alert('Success', 'You have signed in successfully');
+        router.replace('/dashboard');
+      }
+  
+    } catch (error) {
+      console.error('Sign-in failed', error);
+      Alert.alert('Error', 'An unexpected error occurred. Please try again.');
     }
   };
+  
+  
 
   const toggleRememberMe = () => {
     setRememberMe(!rememberMe);
@@ -71,9 +86,14 @@ const SignInPage = () => {
     router.push('/SignUpPage');
   };
 
+  const adminRedirect = () => {
+    router.push('/admin');
+  };
+  
   const handleAccountRecoveryRedirect = () => {
     router.push('/AccRecoveryPage');
   };
+
   return (
     <Animated.View style={[styles.container, { transform: [{ translateX: scrollY }] }]}>
       <StatusBar barStyle="light-content" backgroundColor="#628ff3" />
@@ -88,11 +108,11 @@ const SignInPage = () => {
       <View style={styles.formContainer}>
         <PaperInput
           style={styles.input}
-          label="Username"
-          value={username}
-          onChangeText={setUsername}
+          label="Email"
+          value={email}
+          onChangeText={setEmail}
           mode="outlined"
-          theme={customTheme} 
+          theme={customTheme}
         />
         <PaperInput
           style={styles.input}
@@ -120,7 +140,9 @@ const SignInPage = () => {
             {rememberMe ? '✓ Remember Me' : 'Remember Me'}
           </Button>
           <Button mode="text" textColor="#5A8EE0">
-          <Text style={styles.signUpLink} onPress={handleAccountRecoveryRedirect}>Forgot password?</Text>
+            <Text style={styles.signUpLink} onPress={handleAccountRecoveryRedirect}>
+              Forgot password?
+            </Text>
           </Button>
         </View>
 
@@ -130,7 +152,15 @@ const SignInPage = () => {
 
         <Text style={styles.signUpText}>
           Don't have an account?{' '}
-          <Text style={styles.signUpLink} onPress={handleSignUpRedirect}>Sign up</Text>
+          <Text style={styles.signUpLink} onPress={handleSignUpRedirect}>
+            Sign up
+          </Text>
+        </Text>
+        <Text style={styles.signUpText}>
+          Admin?{' '}
+          <Text style={styles.signUpLink} onPress={adminRedirect}>
+            Sign in
+          </Text>
         </Text>
       </View>
     </Animated.View>

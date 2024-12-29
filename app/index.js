@@ -28,7 +28,7 @@ export default function Index() {
           style={styles.logo}
           resizeMode="contain"
         />
-        <Text style={styles.title}>Taskly</Text>
+        <Text style={styles.title}>MediSearch</Text>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   activeButtonText: {
-    color: MAIN_COLOR,
+    color: '#628bf8',
+
   },
 });

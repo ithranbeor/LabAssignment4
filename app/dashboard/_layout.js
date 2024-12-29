@@ -11,6 +11,7 @@ export default function DrawerLayout() {
           options={{
             drawerLabel: 'Home',
             title: 'Hi!',
+            headerShown: false,
             drawerIcon: () => <MaterialCommunityIcons name='home' size={28} color={'#5A8EE0'}/>
           }}
         />
@@ -19,7 +20,17 @@ export default function DrawerLayout() {
           options={{
             drawerLabel: 'Settings',
             title: 'Settings',
+            headerShown: false,
             drawerIcon: () => <MaterialCommunityIcons name='cog' size={28} color={'#5A8EE0'}/>
+          }}
+        />
+        <Drawer.Screen
+          name="partnership"
+          options={{
+            drawerLabel: 'Partner with Us',
+            title: 'Partner with Us',
+            headerShown: false,
+            drawerIcon: () => <MaterialCommunityIcons name='handshake' size={28} color={'#5A8EE0'}/>
           }}
         />
       </Drawer>

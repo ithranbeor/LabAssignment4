@@ -12,8 +12,10 @@ const DashboardLayout = () => {
           fontSize: 8
         }, 
         tabBarStyle: {
-          margin: 0,
+          marginTop: 5,
+          margin: -50,
           borderRadius: 20,
+          
         },
           tabBarShowLabel: true,
 

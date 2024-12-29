@@ -27,12 +27,42 @@ const RootLayout = () => {
           <Stack.Screen name="SignInPage" options={{
             headerShown: false
           }} />
+          <Stack.Screen name="admin" options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="addDiseases" options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="addSymptoms" options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="symptoms" options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="HospitalList" options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="HospitalProfile" options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="Hospitals" options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="EditHospital" options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="view-account" options={{
+            headerShown: false
+          }} />
+
+
 
           <Stack.Screen name="dashboard" 
           options={{ 
               title: 'Dashboard', 
               headerShown: false }} />
           </Stack>
+          
       </SafeAreaProvider>
     </PaperProvider>
   )
