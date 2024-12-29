@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, Image, Alert, Platform } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
 import { useRouter } from "expo-router";
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../../../lib/supabase';
 import * as Location from 'expo-location'; 
+import MapViewDirections from 'react-native-maps-directions';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -28,6 +29,11 @@ export default function HomeScreen() {
   const [profilePicture, setProfilePicture] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+
+  const [destination, setDestination] = useState({
+    latitude: 8.481, 
+    longitude: 124.647, 
+  });
 
   useEffect(() => {
     requestPermissions();
@@ -157,7 +163,7 @@ export default function HomeScreen() {
         router.push({
           pathname: '/HospitalProfile',
           query: { hospitalId: item.registration_id },
-        });
+        });cd  
       } else if (item.type === 'Disease' || item.type === 'Symptom') {
         router.push({
           pathname: '/symptoms',
@@ -236,7 +242,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Map */}
+      {/* Map with Directions */}
       <View style={styles.mapArea}>
         <MapView
           ref={mapRef}
@@ -247,12 +253,17 @@ export default function HomeScreen() {
           onRegionChangeComplete={(newRegion) => setRegion(newRegion)}
         >
           <Marker
-            coordinate={{
-              latitude: markerPosition.latitude,
-              longitude: markerPosition.longitude,
-            }}
+            coordinate={markerPosition}
             title="My Location"
             description="This is your current location."
+          />
+          
+          <MapViewDirections
+            origin={markerPosition}
+            destination={destination}
+            apikey={"AIzaSyAhEGnDTpMbbMmK9PIV2J-X9kYF-OifBCg"}
+            strokeWidth={3}
+            strokeColor="hotpink"
           />
         </MapView>
       </View>
@@ -277,6 +288,7 @@ export default function HomeScreen() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
