@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "TurnoProfileApp",
-    "slug": "TurnoProfileApp",
+    "slug": "medisearch",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
@@ -51,8 +51,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "50b65e91-3524-4e61-98f0-5f98d19b80dd"
+        "projectId": "c99d2ba8-bf59-41bd-885e-9010dd09bf92"
       }
-    }
+    },
+    "owner": "ithranbeor"
   }
 }

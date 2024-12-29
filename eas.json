@@ -10,11 +10,7 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "env": {
-        "API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZtYWFsdnJpdGlrZHZseW50emFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM4OTQ4NTAsImV4cCI6MjA0OTQ3MDg1MH0.YgcVk8H7x88i2Qs4JU9xQaJnqWD8IB4V7mJdfRZnc1c",
-        "BASE_URL": "https://vmaalvritikdvlyntzal.supabase.co"
-      }
+      "distribution": "internal"
     },
     "production": {
       "autoIncrement": true
