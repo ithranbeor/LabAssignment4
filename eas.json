@@ -5,8 +5,10 @@
     "requireCommit": true
   },
   "build": {
-    "development": {
-      "developmentClient": true,
+    "apk": {
+      "android": {
+        "buildType": "apk"
+      },
       "distribution": "internal"
     },
     "preview": {
