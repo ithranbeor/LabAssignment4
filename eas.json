@@ -17,10 +17,17 @@
     },
     "production": {
       "autoIncrement": true,
-      "environment": "production"
+      "environment": "production",
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "distribution": "store"
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {},
+      "ios": {}
+    }
   }
 }
