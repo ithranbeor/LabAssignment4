@@ -82,6 +82,10 @@ const SignInPage = () => {
     setRememberMe(!rememberMe);
   };
 
+  const xample = () => {
+    router.push('/dashboard');
+  };
+
   const handleSignUpRedirect = () => {
     router.push('/SignUpPage');
   };
@@ -160,6 +164,12 @@ const SignInPage = () => {
           Admin?{' '}
           <Text style={styles.signUpLink} onPress={adminRedirect}>
             Sign in
+          </Text>
+        </Text>
+        <Text style={styles.signUpText}>
+          Admin?{' '}
+          <Text style={styles.signUpLink} onPress={xample}>
+            TEst
           </Text>
         </Text>
       </View>
