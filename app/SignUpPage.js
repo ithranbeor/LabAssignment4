@@ -4,7 +4,7 @@ import { Button, TextInput as PaperInput, DefaultTheme } from 'react-native-pape
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../lib/supabase';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const SignUpPage = () => {
   const [username, setUsername] = useState('');
@@ -47,19 +47,13 @@ const SignUpPage = () => {
     });
   
     if (!result.canceled) {
-      setProfilePicture( result.assets[0].uri ); 
+      setProfilePicture(result.assets[0].uri); 
     }
   };
-  
-  {profilePicture && (
-    <Image source={{ uri: profilePicture }} style={styles.profileImage} />
-  )}
-  
 
-  const handleDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || birthday;
-    setShowDatePicker(Platform.OS === 'ios' ? true : false);
-    setBirthday(currentDate.toISOString().split('T')[0]);
+  const handleDateChange = (date) => {
+    setBirthday(date.toISOString().split('T')[0]);
+    setShowDatePicker(false); // Close the date picker after selection
   };
 
   const isValidEmail = (email) => {
@@ -108,7 +102,6 @@ const SignUpPage = () => {
       Alert.alert('Error', authError.message);
       return;
     }
-  
   
     const { error: dbError } = await supabase
       .from('accDetails')
@@ -179,11 +172,12 @@ const SignUpPage = () => {
           </TouchableOpacity>
 
           {showDatePicker && (
-            <DateTimePicker
-              value={new Date(birthday || Date.now())}
+            <DateTimePickerModal
+              isVisible={showDatePicker}
               mode="date"
-              display="default"
-              onChange={handleDateChange}
+              date={new Date(birthday || Date.now())}
+              onConfirm={handleDateChange}
+              onCancel={() => setShowDatePicker(false)} // Close picker without selecting a date
             />
           )}
 

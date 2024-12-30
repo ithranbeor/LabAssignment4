@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Alert, ActivityIndicator, TouchableOpacity, TextInput } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
-import { MaterialCommunityIcons } from 'react-native-vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { useRouter } from 'expo-router';
 const supabase = createClient(
   'https://vmaalvritikdvlyntzal.supabase.co',
@@ -95,7 +96,7 @@ const ViewAccounts = () => {
         <>
           <TouchableOpacity
             style={styles.backIcon}
-            onPress={() => router.back()} e
+            onPress={() => router.back()}
           >
             <MaterialCommunityIcons name="arrow-left" size={24} color="white" />
           </TouchableOpacity>
