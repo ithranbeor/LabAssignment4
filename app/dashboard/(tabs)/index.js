@@ -262,7 +262,7 @@ export default function HomeScreen() {
             origin={markerPosition}
             destination={destination}
             apikey={"AIzaSyAhEGnDTpMbbMmK9PIV2J-X9kYF-OifBCg"}
-            strokeWidth={3}
+            strokeWidth={5}
             strokeColor="hotpink"
           />
         </MapView>

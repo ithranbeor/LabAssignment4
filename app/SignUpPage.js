@@ -53,7 +53,7 @@ const SignUpPage = () => {
 
   const handleDateChange = (date) => {
     setBirthday(date.toISOString().split('T')[0]);
-    setShowDatePicker(false); // Close the date picker after selection
+    setShowDatePicker(false); 
   };
 
   const isValidEmail = (email) => {
@@ -177,7 +177,7 @@ const SignUpPage = () => {
               mode="date"
               date={new Date(birthday || Date.now())}
               onConfirm={handleDateChange}
-              onCancel={() => setShowDatePicker(false)} // Close picker without selecting a date
+              onCancel={() => setShowDatePicker(false)}
             />
           )}
 

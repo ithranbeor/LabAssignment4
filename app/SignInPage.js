@@ -166,12 +166,6 @@ const SignInPage = () => {
             Sign in
           </Text>
         </Text>
-        <Text style={styles.signUpText}>
-          Admin?{' '}
-          <Text style={styles.signUpLink} onPress={xample}>
-            TEst
-          </Text>
-        </Text>
       </View>
     </Animated.View>
   );
